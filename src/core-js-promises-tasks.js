@@ -111,11 +111,15 @@ function getAllOrNothing(promises) {
  * [Promise.resolve(1), Promise.reject(2), Promise.resolve(3)]  => Promise fulfilled with [1, null, 3]
  */
 function getAllResult(promises) {
-  Promise.allSettled(promises).then((values) => {
-    const p = values.map((item) =>
-      item.status === 'fulfilled' ? item.value : null
+  return new Promise((resolve) => {
+    const arr = [];
+    promises.forEach((item) =>
+      item.then(
+        (value) => arr.push(value),
+        () => arr.push(null)
+      )
     );
-    return Promise.resolve(p);
+    resolve(arr);
   });
 }
 
